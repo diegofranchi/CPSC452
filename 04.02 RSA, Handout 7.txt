@@ -1,0 +1,227 @@
+RECALL:
+    Fermat's Theorem
+        If p is a prime number and a < p is a positive integer not divisible by p, then
+        
+            a^(p-1) mod p = 1
+            
+            also a^p mod p = a
+    
+    Euler Totient Function [fi(n)]
+        The number of positive integers less than n and relatively prime to n
+        m is relatively prime to n if gcd(m,n)=1
+        fi(37) = 36
+        fi(35) = 24
+        
+        extra  rule: two prime numbers p a nd q with p != q, then
+        fi(pq) = fi(p) * fi(q) = (p-1)*(q-1)
+        fi(35) = fi(5) * fi(7) = (5-1)*(7-1) = 4*6 = 24
+        
+        generalized formula: if the prime factorization of n is given by,
+        n = p1^e1 * p2^e2 * ... * pn^en , then...
+        
+            <something here>
+            
+    Euler's Theorem
+        For every a and n that are relatively prime, 
+        
+            a^fi(n) mod n = 1
+            
+            a=3;n=10
+            fi(10)=4; 3^4 mod 10 = 81 mod 10 = 11
+            
+            a=2;n=11
+            fi(11)=10; 2^10 mod 11 = 1024 mod 11 = 1
+            
+    Why are these useful?
+        Very helpful when taking mods of large powers
+        
+Primality Testing [NOX]
+
+    For many cryptographic algorithms, 
+    it is necessary to select one or more 
+    vary large prime numbers at random
+    
+    Naive algorithm: divide by all numbers in turn less than
+    the square root of the number and
+        only works for small numbers
+    
+Miller Rabin Algorithm
+    Background:
+        n-1 = 2^(k)q with n > 3, n odd, k > 0, q odd
+            divide (n-1) by 2 until the result is an odd number
+    Property:
+        Let n > 2 be a prime number, a be an integer 1 < a < n-1, and
+        n-1 = 2^(k)q. Then one of the following two considerations is true:
+            a^q mod n = 1 or
+            there exists 1 <= j <= k such that a^(2^(j-1)q) mod n = n - 1
+            
+    Algorithm: check if n is a prime
+        1. Find integers k > 0, q odd, so that (n-1) = 2^(k)q
+        2. Select a random integer 1 < a < n-1
+        3. if a^q mod n = 1 then return ("maybe prime")
+        4. for j = 1 to k do
+            if a^(2^(j-1)q) mod n = n - 1 then return ("maybe prime")
+        5. else return ("not prime")
+        
+    Probabilistic Considerations:
+        It was shown that given an odd number n that is not
+        prime and a randomly chosen integer 1 < a < n-1, the
+        probability that the algorithm fails to detect that n is
+        not a prime is < 1/4
+        
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////RSA/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+Algorithm
+
+    Encryption and decryption are of the following form for
+    some plaintext block M and ciphertext block C.
+    
+        C = M^e mod n
+        M = C^d mod n
+    
+    Property of modular arithmetic:
+    [(a mod n) * (b mod n)] mod n = (a*b) mod n
+        Thus: M = C^d mod n = (M^e mod n)^d mod n
+                 = (M^e)^d mod n = M^ed mod n
+                 
+ Determining e and d
+ 
+    Find values of e, d, n such that M^ed mod n = M for all M < n
+    
+    Theorem:
+        If e*d=1+k.ø(n) (or e*d mod ø(n) = 1) where gcd(e,ø(n)) = 1,
+        then Med mod n = M.
+    
+        Selecting two large primes p and q
+        Computing n=p*q
+        ø(n)=(p-1)(q-1)
+        Selecting at random the encryption key e where 1<e<ø(n),
+        gcd(e,ø(n)) = 1
+        Solve following equation to find decryption key d
+        e*d mod ø(n) = 1 and 0≤d≤n
+        
+RSA Use
+
+    To encrypt a message M the sender:
+        Obtains public key of recipient PU={e,n}
+        Computes: C = Me mod n, where 0 ≤ M < n
+    To decrypt the ciphertext C the owner:
+        Uses their private key PR={d,n}
+        Computes: M = Cd mod n
+    Can also use the private key to encrypt the message and
+    use the public key to decrypt the message
+        
+RSA Example - Ket Setup
+
+    1. Select primes: p=17 & q=11
+    2. Compute n = p*q =17 x 11=187
+    3. Compute ø(n)=(p–1)(q-1)=16 x 10=160
+    4. Select e: gcd(e,160)=1; choose e=7
+    5. Determine d: d*e mod 160 = 1 and d < 160. Value is
+        d=23 since 23*7=161= 160+1
+    6. Publish public key PU={7,187}
+    7. Keep private key PR={23,187}
+    
+RSA Example - En/Decryption
+
+    Sample RSA encryption/decryption is:
+    Given message M = 88 (nb. 88<187)
+    Encryption:
+        C = 88^7 mod 187 = 11
+    Decryption:
+        M = 11^23 mod 187 = 88
+        
+RSA Security
+
+    Possible approaches to attacking RSA are:
+        Brute force attacks
+        Mathematical attacks:
+            Factoring n into its two prime factors
+            Determine ø(n) directly without determining p and q.
+            Determine d directly.
+        
+/////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////HANDOUT 7/////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+1. Give equations for the following steps in the RSA algorithm:
+(a) Computing the value of n (the modulus).
+(b) Computing the Euler Totient of n (i.e. φ(n)).
+(c) Choosing the public key exponent e.
+(d) Choosing the private key exponent d.
+(e) Encrypting plaintext block M.
+(f) Decrypting ciphertext block C.
+2. Encrypt and then decrypt the following using the RSA algorithm (to decrypt, you will first
+need to compute the private key):
+(a) p = 3; q = 11, e = 7; M = 5
+
+    p = prime ?             True
+    q = prime ?             True
+    n = p*q                 n = 3*11 = 33
+    fi(n) = (p-1)*(q-1)     fi(33) = (3-1)(11-1) = (2)(10) = 20
+    1 < e < fi(n) ?          1 < 7 < 20; True
+    gcd(e,fi(n)) = 1        gcd(7,20) = 1;  True    
+    d*e mod fi(n) = 1       d*7 mod 20 = 1; d=3
+    0 <= d <= n ?            0 <= 3 <= 33;  True
+    n > M ?                 33 > 5; True
+    C = M^e mod n           C = 5^7 mod 33 = 14
+    M = C^d mod n           M = 14^3 mod 33 = 5
+
+(b) p = 5; q = 11, e = 3; M = 9
+
+    p = prime ?             True
+    q = prime ?             True
+    n = p*q                 n = 5*11 = 55
+    fi(n) = (p-1)*(q-1)     fi(55) = (5-1)*(11-1) = (4)(10) = 40
+    1 < e < fi(n) ?         1 < 3 < 40; True
+    gcd(e,fi(n)) = 1        gcd(3,40) = 1;  True
+    d*e mod fi(n) = 1       d*3 mod 40 = 1; d=27
+    0 <= d <= n ?           0 <= 27 <= 55;  True
+    n > M ?                 55 > 9; True
+    C = M^e mod n           C = 9^3 mod 55 = 14
+    M = C^d mod n           M = 14^27 mod 55 = 9
+
+(c) p = 7; q = 11, e = 17; M = 8
+
+    p = prime ?             True
+    q = prime ?             True
+    n = p*q                 n = 7*11 = 77
+    fi(n) = (p-1)*(q-1)     fi(77) = (7-1)*(11-1) = (6)(10) = 60
+    1 < e < fi(n) ?         1 < 17 < 60;    True    
+    gcd(e,fi(n)) = 1        gcd(17,60) = 1; True
+    d*e mod fi(n) = 1       d*17 mod 60 = 1;d=53
+    0 <= d <= n ?           0 <= 53 <= 77;  True
+    n > M ?                 77 > 8; True
+    C = M^e mod n           C = 8^17 mod 77 = 57
+    M = C^d mod n           M = 57^53 mod 77 = 8
+        
+(d) p = 11; q = 13, e = 11; M = 7
+
+    p = prime ?             True
+    q = prime ?             True
+    n = p*q                 n = 11*13 = 143
+    fi(n) = (p-1)*(q-1)     fi(143) = (11-1)*(13-1) = (10)(12) = 120
+    1 < e < fi(n) ?         1 < 11 < 120;   True    
+    gcd(e,fi(n)) = 1        gcd(11,120) = 1;    True
+    d*e mod fi(n) = 1       d*11 mod 120 = 1;   d=11
+    0 <= d <= n ?           0 <= 11 <= 143 
+    n > M ?                 143 > 7
+    C = M^e mod n           C = 7^11 mod 143 = 106
+    M = C^d mod n           M = 106^11 mod 143 = 7
+    
+3. Suppose when choosing the values of RSA parameters, the program chooses the value n =
+pq such that integer p is not prime. Is this a problematic? Explain why or why not.
+4. Explain three types of attacks against RSA.
+5. Consider a Diffie-Hellman scheme using prime number q = 11 and number α = 2 the primitive root of q.
+(a) Show that 2 is a primitive root of 11.
+(b) Suppose user A chooses private key XA = 9. Illustrate how A computes his public key
+YA.
+(c) Suppose user B chooses private key XB = 3. Illustrate how B computes his public key
+YB.
+(d) Illustrate how A computes the shared symmetric key K.(e) Illustrate how B computes the shared symmetric key K.
+(f) Illustrate how attacker E can execute a man-in-the middle attack against A and B.
+6. Compare and contrast the different key distribution schemes discussed in class.
+7. Explain how to execute a man-in-the middle attack against the simple key distribution scheme
+discussed in class.
