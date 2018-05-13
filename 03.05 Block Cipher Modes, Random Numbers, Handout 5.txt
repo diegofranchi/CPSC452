@@ -1,0 +1,192 @@
+Block Cipher Modes of Operation
+
+	Electronic Codebook Mode (ECB)
+	
+		The message is divided into blocks
+		Plaintext is handled one block at a time and each block is encrypted using the same key
+		
+		Advantages:
+			
+			Each block is encrypted independently of the other blocks
+			Ideal for short amount of data
+			
+		Disadvantages:
+		
+			For lengthy message, the ECB mode may not be secure
+			If the same n-bit block of plaintext appears more than once in the message,
+			it will always produce the same ciphertext - does not hide data patterns very well
+			Weakness is due to the encrypted message blocks being independent
+			
+	Cipher Block Chaining (CBC)
+	
+		The input to the encryption algorithm is the XOR of:
+		the current plaintext block, and
+		the preceeding ciphertext block
+		
+		Each ciphertext block is dependent on all plaintext blocks processed up to that point.
+		
+		Encryption: Cj = E(K, Cj-1 XOR Pj)
+						 E(K, 0 XOR D (K, Cj))
+						 E(K, D(K, Cj))
+						 Cj
+						 
+		Decryption: Pj = Cj-1 XOR D(K, Cj)
+					     Cj-1 XOR D(K, E(K, Cj-1 XOR Pj)) //encryption decryption cancel
+						 Cj-1 XOR Cj-1 XOR Pj 
+						 0 XOR Pj //Cj-1 XOR Cj-1 equals ZERO
+						 Pj
+						 
+		Message Padding
+		
+			At end of message must handle a possible last block,
+			which is not as large as block size of cipher 
+			
+		Advantages:
+		
+			Avalanche Effect - a ciphertext block depends on all blocks before it, and 
+			any change to one block affects all the following ciphertext blocks
+			
+		Disadvantages:
+		
+				Encryption is squential (cannot be parallelized)
+				Need Initialization Vector (IV)
+					-which must be known by sender & reciever
+					
+	Cipher FeedBack Mode (CFB)
+
+		C = takes ( E ( SR ) ) XOR P
+		C XOR takes ( E ( SR ) )
+		takes ( E ( SR ) ) XOR P XOR takes ( E ( SR ) )
+		P
+		
+	Output FeedBack (OFB)
+	
+	Counter (CTR)
+	
+	
+Summary: Comparison of Block Cipher Models
+
+Mode							Description
+
+Electronic Codebook (ECB)		Each block of plaintext bits is
+								encoded independently using the
+								same key
+
+Cipher Block Chaining (CBC)		The input to the encryption algo-
+								rithm is the XOR of the next block
+								of plaintext and the preceding block
+								of ciphertext
+
+Cipher Feedback (CFB)			Input is processed s bits at a time.
+								Preceeding xiphertext is used as
+								input.....
+
+Output Feedback(OFB)
+
+Counter (CTR)
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////RANDOM NUMBERS///////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Linear Congruential Generator
+
+	Common iterative technique using:
+		Xn+1 = (aXn + c) mod m
+		m: modulus
+		0 < a < m: the multiplier
+		0 <= c < m: the increment
+		X0: the starting value/seed
+		
+			The selection of values for a,x
+		
+	Choose a large m: mearly equal to the maximum representable nonnegative integer fofr a given computer
+	
+Blum Blum Shub Generator
+
+	X0 = s^2 mod n
+	
+	for i = 1 to oo
+		Xi = (Xi-1)^2 mod n
+		Bi = Xi mod 2
+		
+	Choose two large prime number p and q,
+	that both have aremainder of 3 when divided by 4
+	
+	Choose random number s that is relatively prime to n = p*q
+		
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////HANDOUT 5///////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+1. What is a block cipher mode of operation?
+2. What block cipher modes operation are defined in NIST Special Publication 800-38A?
+3. What are the advantages of the ECB? mode? What are its weaknesses? What are its applications?
+4. What are the advantages of the CBC mode? What are its weaknesses? What are its applications?
+5. What are the advantages of the CFB mode? What are its weaknesses? What are its applications?
+6. What are the advantages of the OFB mode? What are its weaknesses? What are its applications?7. What are the advantages of the CTR mode when compared to ECB, CBC, CFB, and OFB
+modes? What are its applications?
+8. Explain the role of random numbers in cryptography.
+9. What is a pseudo-random number generator (PRNG)?
+10. What are the main advantages of the Linear Congruential Generator (LCG)?
+11. Set up your own LCG and use it to generate a sequence of the first 5 random numbers.
+12. What criteria do we use when choosing values of LCG parameters? In the previous question,
+evaluate the parameters you chose based on the aforementioned criteria.
+
+13. Is the following a good choice of parameters for LCG: X0 = 27, a = 17, c = 43, and m =
+100? Illustrate why or why not.
+
+	Xn+1 = ( aXn + C ) mod m 
+	x1 = (17 * 27 + 43) % 100 = 2
+	x2 = (17 * 2 + 43) % 100 = 52
+	x3 = (17 * 52 + 43) % 100 = 27  <------same as initial value
+	x4 = (17 * 27 + 43) % 100 = 2
+	
+	x0 = 27
+	a = 17								cipher has a period of 4
+	c = 43								not a good set of parameters
+	m = 100
+
+14. What are the weaknesses of LCG?
+
+15. Explain the step-by-step process used by the Blum Blum Shub (BBS) PRNG to generate
+random bits.
+16. Generate the first 10 bits using the BBS PRNG where p = 7, q = 11, and s = 5.
+
+	p = 7		check if p and q are prime enough and n is relativel prime:
+	q = 11			7mod4 = 3 (yes)
+	n = 77			11mod4 = 3 (yes)
+	s = 5			gcd(77,5) = 1 (yes)
+
+	x0 = 5^2 mod 77 = 25
+	x1 = 25^2 mod 77 = 9
+	x2 = 9^2 mod 77 = 4
+	x3 = 4^2 mod 77 = 16
+	
+17. Are the following parameters valid for use in the BBS PRNG: p = 47 and q = 31? Explain.
+18. What are the strengths of BBS PRNG? What are its weaknesses? Give an example of an
+application for which BBS PRNG is well suited.
+19. Explain how block ciphers can be used as PRNGs.
+20. Explain the process used by ANSI X9.17 PRNG random number generator to generate random numbers. Why is it so difficult to compromise?21. ANSI X9.17 PRNG is arguably the most secure PRNG. Explain the practical limitations
+of ANSI X9.17 PRNG. That is, are there applications for which ANSI X9.17 PRNG is not
+particularly well suited?
+22. What is the difference between PRNG and a true random number generator (TRNG)?
+23. TRNGS may produce sequences of random numbers that are \skewed". Explain what this
+means. How can the issue of skewness in TRNGs be addressed?
+24. What advantage do stream ciphers have over block ciphers?
+25. Analyze advantages and disadvantages of different encryption placement strategies.
+26. What sort of applications would most benefit most end-to-end encryption?
+27. What sort of applications would most benefit from link encryption?28. Explain the basic approach for defeating traffic analysis.
+29. What is key distribution? Why is it important?
+30. What are the three common ways of distributing an encryption key? Analyze the advantages
+and disadvantages of each approach.
+31. Consider a network with n users. Each user wants to be able to securely communicate with
+all other users using symmetric encryption. How many symmetric keys are needed? How
+many symmetric keys are needed if a key distribution authority (KDC) scheme is used where
+each user shares a unique master key with the KDC?
+32. Explain each step of the key distribution scenario discussed in class. Be sure to address the
+importance of each step.
