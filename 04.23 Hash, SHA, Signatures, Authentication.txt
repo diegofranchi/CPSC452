@@ -1,0 +1,268 @@
+Hash Algorithms
+
+    The hash function takes an input message and partitions
+    it into L fixed-sized blocks of b bits each
+    
+    The final block also includes the value of the total length
+    of the input to the hash function – makes the job of the
+    attacker more difficult
+    
+               Y1                   YL-1
+          |\   | |\                | |\
+     Y0 ->| \  └>| \               └>| \
+          |f|    |f|                 |f|--->CVL
+     IV ->| /--->| /---> . . . ----->| /
+     CV0  |/ CV1 |/ CV2        CVL-1 |/
+     
+     IV = initial value         f = compression algorithm
+     CV = chaining variable     Y = input block
+
+    The algorithm repeatedly uses a compression function f
+    that takes two inputs:
+    
+        An n-bit output from previous step – chaining variable
+        A b-bit block
+        
+    And produces an n-bit output. b > n --> compression
+
+    
+    
+SHA-512
+     ________________________________________________________________
+    |                                                                |
+    |________________________________________________________________|
+     ________________________________________________________________
+    |                                                                |
+    |________________________________________________________________|
+    
+    Processing of a Single 1024-bit block
+    
+        Step 1: Append padding bits
+            The message is padded so that length mod 1024 = 896. The
+            padding consists of a single 1-bit followed by the
+            necessary number of 0-bits.
+            
+        Step 2: Append length
+            A block of 128 bits is appended to the message, that
+            contains the length of the original message (does not include
+            the padding)
+            Length of the expanded message: N*1024.
+            
+        Step 3: Initialize hash buffer
+            A 512-bit buffer is used to hold
+            intermediate and final results of the hash
+            function. The buffer can be represented as
+            eight 64-bit registers (a,b,c,d,e,f,g,h)
+            a = 6A09E667F3BCC908
+            b = BB67AE8584CAA73B
+            c = 3C6EF372FE94F82B
+            d = A54FF53A5F1D36F1
+            e = 510E527FADE682D1
+            f = 9B05688C2B3E6C1F
+            g = 1F83D9ABFB41BD6B
+            h = 5BE0CD19137E2179
+            
+        Step 4: Process message in 1024-bit (128-word) blocks
+            Consists of 80 rounds
+            Updating a 512-bit buffer
+            Using a 64-bit value Wt derived from the current message block Mi
+            Each round also makes use of a constant Kt
+            The output of the Round 79 is added to the input to the 
+             first round to produce Hi.
+             
+    SHA-512 Round Function
+    
+    
+    Maj(x,y,z) = (x AND y) XOR (x and z) XOR (y AND z)
+    ch(x,y,z) = (x AND y) XOR (NOT x AND z)
+    
+    a_out = sigma(a) + Maj(a,b,c) + Ch(e,f,g) + h + sigma(e)
+    b_out = a
+    c_out = b
+    d_out = c
+    e_out = d + ch(e,f,g) + sigma(e) + w + k + h
+    f_out = e
+    g_out = f
+    h_out = g
+     _______________________________________________________________
+    |   a   |   b   |   c   |   d   |   e   |   f   |   g   |   h   |
+    |_______|_______|_______|_______|_______|_______|_______|_______|
+      | | |    | |     | |      |      | |     | |     | |      |
+      \ Σ |    |  \   /
+       \|  \---|---Maj
+        +<------\____
+        |\_____       \
+        +<     \       \
+     ___|_______|_______|_______|_______|_______|_______|_______|___
+    |   a   |   b   |   c   |   d   |   e   |   f   |   g   |   h   |
+    |_______|_______|_______|_______|_______|_______|_______|_______|
+ 
+
+ 
+Digital Signatures
+
+    Properties
+        Must depend on the message signed
+        Must use information unique to sender
+            To prevent both forgery and denial
+        Must be relatively easy to produce
+        Must be relatively easy to recognize & verify
+        Must be computationally infeasible to forge
+            Constructing a new message for an existing digital signature
+            Constructing a fraudulent digital signature for a given message
+        Must be practical to save digital signature in storage
+        
+    Direct Digital Signatures
+         ___       ___       ___       ___       ___       ___       ___       ___
+        | M | --> / H \ --> | H | --> | E | --> | H | --> | M | --> | E | --> | M |
+        |___|     \___/     |___|     |___|     |___|     |___|     |___|     |___|
+          |                                     | H |
+          └-----------------------------------> |___|
+                                           digital signature
+         ___       ___       ___       ___                                        
+        | D | --> | M | --> / H \ --> | H | --┐
+        |___|     |   |     \___/     |___|   |
+                  |___|      ___       ___    match?
+                  | H | --> | D | --> | H | --┘
+                  |___|     |___|     |___|
+    
+        Involve only sender and receiver
+        
+        Assume receiver has sender’s public-key
+        
+        Digital signature may be formed by encrypting the
+        entire message with the sender’s private key or by
+        encrypting a hash code of the message with the sender’s
+        private key.
+        
+        Confidentiality can be provided by further encrypting
+        the entire message plus signature with either receiver’s
+        public key or shared secret key.
+        
+        It is important to sign first then encrypt message & signature
+            In case of dispute, some third party must view the message and its signature.
+                If the signature is calculated on an encrypted message, then
+                  the third party needs access to the decryption key to read
+                  the original message
+                Otherwise, the recipient can store the plaintext message and
+                  its signature for later use in dispute resolution.
+                  
+        Weakness: the validity of the scheme depends on the
+          security of the sender’s private key
+            If a sender wishes to deny sending a particular message,
+            the sender can claim that the private key was lost or stolen
+        
+    Arbitrated Digital Signatures
+    
+        Involves use of arbiter A
+            Every signed message from a sender X to a receiver Y goes
+            first to an arbiter A.
+            A then validates any signed message
+            The message is then dated and sent to recipient Y with an
+            indication that it has been verified to the satisfaction of
+            the arbiter.
+            
+        Requires suitable level of trust in arbiter
+        
+        Arbiter may or may not see message
+        
+        Need to encrypt the message twice.
+
+
+        
+Authentication Protocols
+
+    Used to convince parties of each other’s identity and to exchange session keys
+    
+    Published protocols are often found to ave flaws and need to be modified:
+    
+        Confidentiality: to prevent masquerade and to prevent compromise of
+          session keys, essential identification and session key information
+          must be communicated in encrypted from.
+          
+        Timeliness: to prevent replay attacks
+        
+    Replay Attacks
+    
+        A valid signed message is copied and later resent
+        
+            Simple replay: the opponent simply copies a message and replays it later
+            
+            Repetition that can be logged: an opponent can replay a timestamped message 
+              within the valid time window
+            
+            Repetition that cannot be detected: may arise because the original message 
+              could have been suppressed and thus did not arrive at its destination; 
+              only the replaymessage arrives.
+            
+            Backward replay without modification: a replay back to the sender
+                When using symmetric encryption, the sender cannoteasily recognize 
+                the difference between messages sent and messages received.
+                  
+        Countermeasures
+        
+            Attach a sequence number to each message used in an authentication exchange
+                Generally impractical – requires each party to keep track of
+                the last sequence number for each claimant it has dealt with
+                 
+            Timestamps: party A accepts a message as fresh only if the message contains a 
+            timestamp that, in A’s judgment, is close enough to A’s knowledge of current time.
+                Needs synchronized clocks
+                
+            Nonce: a random number that illustrates the freshness of a session.
+                Party A sends B a nonce and requires that the subsequent response 
+                received from B contains the correct nonce value.
+                
+    Needham-Schroeder Symmetric Key Protocol
+    
+        Original third-party key distribution protocol
+        
+        For session between A B mediated by Key Distribution Center (KDC)
+            Each party shares own master key with KDC
+            KDC generates session keys used for connections between parties
+            Master keys used to distribute these to them
+        
+        Protocol:
+        1. A    -> KDC: IDA || IDB || N1
+        2. KDC  -> A:   EKa[Ks || IDB || N1 || EKb[Ks||IDA]]
+        3. A    -> B:   EKb[Ks||IDA]
+        4. B    -> A:   EKs[N2]
+        5. A    -> B:   EKs[f(N2)]
+        
+        Attack on Needham-Schroeder
+        
+            Suppose that an attacker X has been able to compromise an old session key.
+            
+            X can impersonate A and trick B into using the old key by simply replaying step 3.
+            
+            Unless B remembers indefinitely all previous session keys used with A, 
+            B will be unable to determine that this is a replay.
+            
+            X then intercepts the step 4 and sends bogus messages to B that appear to B 
+            to come from A using an authenticated session key.
+            
+        Solution: Needham-Schroeder Protocol
+        
+            Use a timestamp T that assures A and B that the session 
+            key has only just been generated.
+            
+            Revised protocol:
+            1. A    ->KDC:  IDA || IDB || N1
+            2. KDC  -> A:   EKa[Ks || IDB || N1 || EKb[Ks||IDA||T]]
+            3. A    -> B:   EKb[Ks||IDA||T]
+            4. B    -> A:   EKs[N2]
+            5. A    -> B:   EKs[f(N2)]
+            
+        Suppress-Replay Attacks
+        
+            Suppress-replay attacks: when the sender’s clock is ahead of the 
+             receiver’s clock, the opponent can intercept a message from the 
+             sender and replay it later when the timestamp in the message 
+             becomes current at the receiver’s site.
+            
+            Countermeasure:
+            
+                Enforce the requirement that parties regularly check
+                their clocks against the KDC’s clock.
+                
+                Rely on handshaking protocols using nonces.
