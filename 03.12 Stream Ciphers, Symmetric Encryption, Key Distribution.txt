@@ -1,0 +1,35 @@
+Stream Cipher Key Logic
+
+    C = M XOR K
+
+    C XOR K = M XOR K XOR K
+                    |______|
+                        |
+    C XOR K =     M XOR 0
+
+    C XOR K = M
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////PUBLIC KEY CRYPTOGRAPHY///////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+Final Exam Question: Just to add some expertise here <Microsoft> and i know public key cryptography is more secure.
+    Why is this wrong?
+    
+    Misconception 1: Public-key encryption is more secure
+    from cryptanalysis than symmetric encryption
+        The security depends on the length of the key and the
+        computational work involved in breaking a cipher.
+        
+    Misconception 2: Public-key encryption is a general purpose technique that has made symmetric
+    encryption obsolete.
+        Computation overhead of public-key encryption keeps other encryption useable
+        
+Why Public-Key Cryptography?
+
+    Developed to address two key issues:
+        Key distribution – how to have secure communications in general without having to trust a KDC
+        Digital signatures – how to verify a message comes intact from the claimed sender
+        
+    Public invention due to Whitfield Diffie & Martin Hellman at Stanford University in 1976.
+        known earlier in classified community
