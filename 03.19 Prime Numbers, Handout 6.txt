@@ -1,0 +1,118 @@
+///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////Handout 6//////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+1. Explain a symmetric key distribution scheme based on the use of the key distribution center
+(KDC). Identify both the key distribution and the authentication steps.
+
+2. Assume there are N users on the network. Each user wants to privately communicate with all
+other users using only symmetric key cryptography. How many symmetric keys are needed?
+How many symmetric keys are needed if the aforementioned scheme is replaced with a KDCbased scheme?
+
+3. Explain the salient differences between symmetric and public-key cryptography.
+
+4. What are two common misconceptions about public-key cryptography? Explain.
+
+5. What are the main applications of public-key cryptography?
+
+6. Compare security requirements of symmetric and public-key cryptography.
+
+7. Use Fermat’s Little Theorem to compute the following:
+(a) 3^(401)mod401
+	
+	p = 401	(prime?)	a^(p-1) mod p = 1			[(a^(p-1) mod p)(a mod p)] mod p
+	a = 3				3^(401-1) mod 401 = 1		[(3^400 mod 401)(3 mod 401)] mod 401
+	a < p ?				3^400 mod 401 = 1			[(1)(3)] mod 401 = 3
+	3 < 401 (yes)
+	
+(b) 10^(709)mod11
+	
+	p = prime
+	p = 11	(prime?)	a^(p-1) mod p = 1			[(10^10 mod 11)^70(10^9 mod 11)] mod 11
+	a = 10				10^(11-1) mod 11 = 1			[(1)(10^9 mod 11)] mod 11 = 10
+	a < p ?				10^10 mod 11 = 1
+	10 < 11 (yes)
+	
+(c) 12^(9001)mod29
+
+	p = 29 (prime?)		a^(p-1) mod p = 1			[(12^28 mod 29)^321(12^13 mod 29)] mod 29
+	a = 12				12^(29-1) mod 29 = 1			[(1)(12^13 mod 29] mod 29 = 12
+	a < p ?				12^28 mod 29 = 1				
+	12 < 29 (yes)
+
+(d) 40^(7711579)mod31 --->	(5*8)^(7711579)mod31
+							(5^(7711579)mod31)(8^(7711579)mod31)
+							[(5^30 mod 31)^257052(5^19 mod 31)(8^(7711579) mod 31)] mod 31
+							[(1)(19073486328125 mod 31)(8^(7711579) mod 31)] mod 31
+							[(5)(8^30 mod 31)^257052(8^19 mod 31)] mod 31
+							[(5)(4)] mod 31 = 20
+							
+	p = 31 (prime?)			p = 31									a^(p-1) mod p = 1
+	a = 40					a = 5				p = 8				5^30 mod 31 = 1
+	a < p ?					a < p ?				a < p ?				8^30 mod 31 = 1
+	40 < 31 (no)			5 < 31 (yes)		8 < 31 (yes)
+	
+(e) 41^(9811)mod30 --->	
+
+	p = 30 (prime?) NO
+
+8. Compute the following Euler Totients:
+(a) fi(31)
+
+	prime number so...
+	(31 - 1) = 30
+
+(b) fi(247)
+
+	product of prime numbers so...
+	247 = (13*19)
+	(13-1)(19-1)
+	12 * 18 = 216
+	
+(c) fi(16)
+
+	product of prime numbers:
+	16 = 2*2*2*2
+	(2-1)(2-1)(2-1)(2-1)
+	1 * 1 * 1 * 1 = 1			WRONG
+	
+	since prime factors are the same number we use a generalized formula:
+	16 * (1 - 1/2) = 8
+	
+
+(d) fi(81)
+
+	power of a prime number:
+	81 * (1 - 1/3) = 54
+				^
+			prime number
+
+(e) fi(72)
+
+	product of power primes:
+	72 * (1 - 1/3) * (1 - 1/2) = 24
+
+9. Show that if p and q are primes, then f(pq) = f(p) * f(q).10. Compute the following using Euler’s Theorem:
+(a) 9^28mod7
+
+	gcd(9,7) = 1 ? (yes)		9^28 mod 27 = [(9^6 mod 7)(9^4 mod 7)] mod 7
+	~apply ET~
+	9^fi(7) mod 7 = 1							[(1)(9^4 mod 7)] mod 7 = 2
+	9^6 mod 7 = 1
+
+(b) 29^100mod13
+
+	gcd(29,13) = 1 ? (yes)		29^100 mod 13 = [(29^12 mod 13)(29^4 mod 13)] mod 13
+	~apply ET~
+	29^fi(13) mod 13 = 1							[(1)(29^4 mod 13)] = 3
+	29^12 mod 13 = 1
+	
+
+(c) 30^200mod23
+
+	gcd(30,23) = 1 ? (yes)
+	~apply ET~
+	30^
+
+(d) 9^4mod3
+11. Explain the salient principles underlying Miller-Rabin Algorithm.
