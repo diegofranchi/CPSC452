@@ -1,0 +1,139 @@
+Diffie-Hellman Key Exchange
+
+    The purpose is to enable two users to securely
+    exchange a key that can then be used for subsequent
+    encryption of messages.
+    
+    An integer a is a primitive root of a prime number q if a
+    mod q, a2 mod q, …, aq-1 mod q are distinct and consist of
+    the integers from 1 through q-1 in some permutation
+    
+    There are two publicly known numbers:
+        A prime number q
+        An integer a that is the primitive root of q
+        
+    Each user generates his/her key
+        Chooses a private key (number): x < q
+        Computes their public key: y = ax mod q
+        
+    Each user keeps the x value private and makes the y
+    value available publicly
+    
+    PROOF:
+                Bob (xB)                    Alice (xA)
+                
+           yB = a^xB mod a           yA = a^xA mod a
+                           \        /
+                            \      /
+                             \    /
+                              \  /
+                               \/
+          yA^xB mod a = _______/\______yB^xA mod a = (a^xB mod a)^xB mod a
+           a^xA mod a =                            = (a^(xB*xA) mod a) mod a
+   (a^xA mod a) mod a =                            = a^(xB*xA) mod a
+a^(xA*xB) mod a mod a =                            
+      a^(xA*xB) mod a = Kab
+      
+      
+    EXAMPLE:
+    
+        Users A & B who wish to swap keys:
+        
+        Agree on prime q=353 and a=3
+        
+        Select random private keys:
+            A chooses xA=97, B chooses xB=233
+            
+        Compute respective public keys:
+            yA=397 mod 353 = 40 (A)
+            yB=3233 mod 353 = 248(B)
+            
+        Compute shared session key as:
+            K_AB= yB^xA mod 353 = 24897 mod 353 = 160 (A)
+            K_AB= yA^xB mod 353 = 40233 mod 353 = 160 (B)
+            
+    Man-in-the-Middle Attack
+    
+                           _>_>__(xD1,yD1)_>_>__
+                          /      (xD2,yD2)      \
+                  (xA,yB)/                       \(xB,yB)
+                   Alice           Darth           Bob               
+                         \                       /
+        K2 = yD2^xA mod q \__K2 = yA^xD2 mod q__/ K1 = yD1^xB mod q
+                             K1 = yB^xD1 mod q
+                  
+                  
+        Now, Alice and Bob think that they share a secret key,
+        but instead Bob and Darth share secret key K1. Darth
+        and Alice share secret key K2
+        
+
+Authentication
+
+      <---------Source A--------------->             <----------Destination B------->
+       ___                ____      ___      ___      ___      ____      ___
+      | M |------------->| H  |--->| E |--->|   |--->| D |--->| M  |--->| F |---+
+      |___|--+      +--->|____|    |___|    |   |    |___|    |____|    |___|   |
+             |      |    |F(M)|      ^      |   |      ^      |F(M)|            Compare
+             +-->F--+    |____|      |      |   |      |      |____|------------+
+                                     K      |___|      K
+                                         E(K,[M|F(M)])
+                                         
+     Message Encryption Summary (Symmetric)
+     
+        A->B: E(K,M)
+            Provides confidentiality
+                Only A and B share K
+            Provides a degree of authentiatin
+                Could come only from A
+                Has not been altered in transit
+                Requires some formatting/redundancy
+            Does not provide signature
+                Receiver could forge message
+                Sender could deny message
+                             ___
+     ___         ___        |   |        ___         ___
+    | M |------>| E |------>|   |------>| D |------>| M |
+    |___|       |___|       |___|       |___|       |___|
+                  ^        E(PUb,M)       ^
+                  |                       |
+                 PUb                     PRb
+            public-key encryption: confidentiality
+                             ___
+     ___         ___        |   |        ___         ___
+    | M |------>| E |------>|   |------>| D |------>| M |
+    |___|       |___|       |___|       |___|       |___|
+                  ^        E(PRb,M)       ^
+                  |                       |
+                 PRa                     PUa
+     public-key encryption: authenticaiton and signature
+/////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////HANDOUT 8/////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+1. Show that 3 is a primitive root of 5.
+
+	a = 3, q = 5   
+    
+	3 mod 5 = 3
+	3^2 mod 5 = 4
+	3^3 mod 5 = 2       distinct?   True
+	3^4 mod 5 = 1       range? (1 to q-1)      True
+	
+2. Show that 4 is not a primitive root of 5.
+
+    a = 4, q = 5
+    
+    4 mod 5 = 4
+    4^2 mod 5 = 1
+    4^3 mod 5 = 4       distinct answers?   False
+    4^4 mod 5 = 1       range? (1 to q-1)   False
+
+3. Two systems are exchanging encrypted messages. How can the receiver system verify that
+the received message was correctly decrypted?
+4. Describe three approaches for implementing a message authentication function.
+5. What is the difference between a hash function and message authentication code (MAC)?
+6. What is the difference between symmetric encryption and MAC?7. What are the requirements for a cryptographically secure function?
+8. Does symmetric key cryptography provide authentication? Digital signature?
+9. Explain the basic structure of the cryptographic hashing algorithm.
+10. Explain the steps SHA-512 algorithm uses to generate a hash value of the message.S
